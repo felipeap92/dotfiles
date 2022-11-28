@@ -175,7 +175,11 @@ if ! xcode-select --print-path &> /dev/null; then
 
     sudo xcodebuild -license
     print_result $? 'Agree with the XCode Command Line Tools licence'
+fi
 
+if [[ $(uname -m) == 'arm64' ]]; then
+  bot "installing Rosetta"
+  sudo softwareupdate --install-rosetta --agree-to-license
 fi
 
 # ###########################################################
@@ -910,6 +914,12 @@ find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -dele
 # defaults write com.apple.dock wvous-br-corner -int 5
 # defaults write com.apple.dock wvous-br-modifier -int 0;ok
 
+bot "Configuring Dock apps"
+defaults write com.apple.dock persistent-apps -array
+for dockItem in {/System/Applications/{"Finder","System Preferences","App Store","Launchpad","Calendar"},/Applications/{"Anki","Discord","Spotify","WhatsApp","Slack","iTerm","Google Chrome","Sublime Text","Visual Studio Code","Insomnia","DBeaver","Numi"}}.app; do
+  defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>'$dockItem'</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+done
+
 ###############################################################################
 bot "Configuring Safari & WebKit"
 ###############################################################################
@@ -1012,6 +1022,7 @@ defaults write com.apple.spotlight orderedItems -array \
   '{"enabled" = 0;"name" = "SOURCE";}';ok
 running "Load new settings before rebuilding the index"
 killall mds > /dev/null 2>&1;ok
+
 running "Make sure indexing is enabled for the main volume"
 sudo mdutil -i on / > /dev/null;ok
 #running "Rebuild the index from scratch"
@@ -1062,15 +1073,14 @@ defaults write com.googlecode.iterm2 FocusFollowsMouse -int 1;
 defaults write com.googlecode.iterm2 HotkeyModifiers -int 262401;ok
 
 running "Make iTerm2 load new tabs in the same directory"
-/usr/libexec/PlistBuddy -c "set \"New Bookmarks\":0:\"Custom Directory\" Recycle" ~/Library/Preferences/com.googlecode.iterm2.plist
+/usr/libexec/PlistBuddy -c "set \"New Bookmarks\":0:\"Custom Directory\" Recycle" ~/Library/Preferences/com.googlecode.iterm2.plist;ok
+
 running "setting fonts";
 defaults write com.googlecode.iterm2 "Normal Font" -string "Hack-Regular 12";
-defaults write com.googlecode.iterm2 "Non Ascii Font" -string "RobotoMonoForPowerline-Regular 12";
-ok
+defaults write com.googlecode.iterm2 "Non Ascii Font" -string "RobotoMonoForPowerline-Regular 12";ok
 
 running "reading iterm settings"
-defaults read -app iTerm > /dev/null 2>&1;
-ok
+defaults read -app iTerm > /dev/null 2>&1;ok
 
 ###############################################################################
 bot "Time Machine"

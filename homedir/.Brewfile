@@ -9,7 +9,6 @@ tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
-tap "homebrew/dupes"
 
 # command-line tool for upgrading outdated cask apps https://github.com/buo/homebrew-cask-upgrade
 tap "buo/cask-upgrade"
@@ -39,14 +38,7 @@ brew "moreutils"
 brew "tree"
 brew "watch"
 # Install wget with IRI support
-brew "wget", args: ["--enable-iri"]
-# Install GNU `sed`, overwriting the built-in `sed`
-# so we can do "sed -i 's/foo/bar/' file" instead of "sed -i '' 's/foo/bar/' file"
-brew "gnu-sedbrew", args: ["--with-default-names"]
-# upgrade grep so we can get things like inverted match (-v)
-brew "grepbrew", args: ["--with-default-names"]
-# better, more recent grep
-brew "homebrew/dupes/grep"
+brew "wget"
 # https://github.com/jkbrzt/httpie
 brew "httpie"
 brew "jq"
