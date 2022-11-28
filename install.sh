@@ -178,8 +178,8 @@ if ! xcode-select --print-path &> /dev/null; then
 fi
 
 if [[ $(uname -m) == 'arm64' ]]; then
-  bot "installing Rosetta"
-  sudo softwareupdate --install-rosetta --agree-to-license
+  sudo softwareupdate --install-rosetta --agree-to-license &> /dev/null
+    print_result $? ' Rosetta Installed'
 fi
 
 # ###########################################################
@@ -223,13 +223,14 @@ require_brew zsh
 # use versions of packages installed with homebrew
 RUBY_CONFIGURE_OPTS="--with-openssl-dir=`brew --prefix openssl` --with-readline-dir=`brew --prefix readline` --with-libyaml-dir=`brew --prefix libyaml`"
 require_brew ruby
+
 # set zsh as the user login shell
 CURRENTSHELL=$(dscl . -read /Users/$USER UserShell | awk '{print $2}')
-if [[ "$CURRENTSHELL" != "/usr/local/bin/zsh" ]]; then
-  bot "setting newer homebrew zsh (/usr/local/bin/zsh) as your shell (password required)"
-  # sudo bash -c 'echo "/usr/local/bin/zsh" >> /etc/shells'
-  # chsh -s /usr/local/bin/zsh
-  sudo dscl . -change /Users/$USER UserShell $SHELL /usr/local/bin/zsh > /dev/null 2>&1
+if [[ "$CURRENTSHELL" != "/bin/zsh" ]]; then
+  bot "setting newer homebrew zsh (/bin/zsh) as your shell (password required)"
+  # sudo bash -c 'echo "/bin/zsh" >> /etc/shells'
+  # chsh -s /bin/zsh
+  sudo dscl . -change /Users/$USER UserShell $SHELL /bin/zsh > /dev/null 2>&1
   ok
 fi
 
@@ -406,12 +407,6 @@ sudo systemsetup -setremoteappleevents off
 # Disable remote login
 sudo systemsetup -setremotelogin off
 
-# Disable wake-on modem
-sudo systemsetup -setwakeonmodem off
-
-# Disable wake-on LAN
-sudo systemsetup -setwakeonnetworkaccess off
-
 # Disable file-sharing via AFP or SMB
 # sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.AppleFileServer.plist
 # sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.smbd.plist
@@ -487,23 +482,28 @@ sudo defaults write /Library/Preferences/com.apple.loginwindow GuestEnabled -boo
 # sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "antic"
 
 #setting up the computer label & name
-read -p "What is this machine's label (Example: Paul's MacBook Pro ) ? " mac_os_label
-if [[ -z "$mac_os_label" ]]; then
-  echo "ERROR: Invalid MacOS label."
-  exit 1
+
+read -r -p "Do you want to this machine label and name? [y|N] " response
+if [[ -z $response || $response =~ ^(y|yes|Y) ]]; then
+  read -p "What is this machine's label (Example: Paul's MacBook Pro ) ? " mac_os_label
+  if [[ -z "$mac_os_label" ]]; then
+    echo "ERROR: Invalid MacOS label."
+    exit 1
+  fi
+
+  read -p "What is this machine's name (Example: paul-macbook-pro ) ? " mac_os_name
+  if [[ -z "$mac_os_name" ]]; then
+    echo "ERROR: Invalid MacOS name."
+    exit 1
+  fi
+
+  echo "Setting system Label and Name..."
+  sudo scutil --set ComputerName "$mac_os_label"
+  sudo scutil --set HostName "$mac_os_name"
+  sudo scutil --set LocalHostName "$mac_os_name"
+  sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$mac_os_name"
 fi
 
-read -p "What is this machine's name (Example: paul-macbook-pro ) ? " mac_os_name
-if [[ -z "$mac_os_name" ]]; then
-  echo "ERROR: Invalid MacOS name."
-  exit 1
-fi
-
-echo "Setting system Label and Name..."
-sudo scutil --set ComputerName "$mac_os_label"
-sudo scutil --set HostName "$mac_os_name"
-sudo scutil --set LocalHostName "$mac_os_name"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "$mac_os_name"
 
 # running "Disable smooth scrolling"
 # (Uncomment if you’re on an older Mac that messes up the animation)
@@ -677,12 +677,6 @@ defaults write com.apple.BluetoothAudioAgent "Apple Bitpool Min (editable)" -int
 
 running "Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)"
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3;ok
-
-running "Use scroll gesture with the Ctrl (^) modifier key to zoom"
-defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true
-defaults write com.apple.universalaccess HIDScrollZoomModifierMask -int 262144;ok
-running "Follow the keyboard focus while zoomed in"
-defaults write com.apple.universalaccess closeViewZoomFollowsFocus -bool true;ok
 
 running "Disable press-and-hold for keys in favor of key repeat"
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false;ok
@@ -916,8 +910,8 @@ find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -dele
 
 bot "Configuring Dock apps"
 defaults write com.apple.dock persistent-apps -array
-for dockItem in {/System/Applications/{"Finder","System Preferences","App Store","Launchpad","Calendar"},/Applications/{"Anki","Discord","Spotify","WhatsApp","Slack","iTerm","Google Chrome","Sublime Text","Visual Studio Code","Insomnia","DBeaver","Numi"}}.app; do
-  defaults write com.apple.dock persistent-apps -array-add '<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>'$dockItem'</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>'
+for dockItem in {/System/Applications/{'System Settings','App Store','Launchpad','Calendar'},/Applications/{'Anki','Discord','Spotify','WhatsApp','Slack','iTerm','Google Chrome','Sublime Text','Visual Studio Code','Insomnia','DBeaver','Numi'}}.app; do
+  defaults write com.apple.dock persistent-apps -array-add "<dict><key>tile-data</key><dict><key>file-data</key><dict><key>_CFURLString</key><string>$dockItem</string><key>_CFURLStringType</key><integer>0</integer></dict></dict></dict>"
 done
 
 ###############################################################################
@@ -1209,20 +1203,18 @@ defaults write com.irradiatedsoftware.SizeUp StartAtLogin -bool true;ok
 running "Don’t show the preferences window on next start"
 defaults write com.irradiatedsoftware.SizeUp ShowPrefsOnNextStart -bool false;ok
 
-killall cfprefsd
-
-open /Applications/iTerm.app
-
 ###############################################################################
 # Kill affected applications                                                  #
 ###############################################################################
 bot "OK. Note that some of these changes require a logout/restart to take effect. Killing affected applications (so they can reboot)...."
 for app in "Activity Monitor" "Address Book" "Calendar" "Contacts" "cfprefsd" \
   "Dock" "Finder" "Mail" "Messages" "Safari" "SizeUp" "SystemUIServer" \
-  "iCal" "Terminal"; do
+  "iCal"; do
   killall "${app}" > /dev/null 2>&1
 done
 
+killall cfprefsd
+open /Applications/iTerm.app
 brew update && brew upgrade && brew cleanup
 
 bot "Woot! All done"
