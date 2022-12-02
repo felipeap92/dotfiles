@@ -1,18 +1,17 @@
 #!/bin/sh
 
-#################################
-# Simple Program Name Shortening
+########################################
+#### Simple Program Name Shortening ####
+########################################
+
 alias g=git
 
-#############################
-# Utilities
+########################################
+############## Utilities ###############
+########################################
 
 # Lock the screen (when going AFK)
 alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
-
-# buzzphrase commit
-# used for my presentation decks when I have nothing to say about the commit
-alias bpc='git add -A . && git cam "$(buzzphrase 2)" && git push'
 
 # recursive dos2unix in current directory
 alias dos2lf='dos2unix `find ./ -type f`'
@@ -35,12 +34,8 @@ alias files.usage.user='sudo fs_usage -e -f filesystem|grep -v CACHE_HIT|grep -v
 alias game.seek='txt="";for i in {1..20};do txt=$txt"$i. ";done;txt=$txt" Ready or not, here I come";say $txt'
 
 # IP addresses
-alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
 alias iplocal="ipconfig getifaddr en0"
 alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
-
-# Show active network interfaces
-alias ifactive="ifconfig | pcregrep -M -o '^[^\t:]+:([^\n]|\n\t)*status: active'"
 
 # Show network connections
 # Often useful to prefix with SUDO to see more system level network usage
@@ -94,3 +89,9 @@ alias k='kubectl'
 alias kp='kubectl get pods -o wide'
 alias kdp='kubectl describe pod'
 alias kdn='kubectl describe node'
+
+########################################
+############## Utilities ###############
+########################################
+
+alias ayasrc="cd ~/src/aya"
