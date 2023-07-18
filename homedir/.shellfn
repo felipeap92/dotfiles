@@ -108,9 +108,6 @@ function tre(){
   tree -aC -I '.git|node_modules|bower_components|.DS_Store' --dirsfirst "$@"
 }
 
-function weather() {
-  curl wttr.in/$1
-}
 function ipinfo(){
   curl ipinfo.io/$1
 }

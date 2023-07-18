@@ -50,6 +50,7 @@ brew "graphviz"
 # Mac App Store CLI: https://github.com/mas-cli/mas
 brew "mas"
 brew "nvm"
+brew "yarn"
 
 brew "go"
 brew "golang-migrate"
