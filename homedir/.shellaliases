@@ -95,3 +95,7 @@ alias kdn='kubectl describe node'
 ########################################
 
 alias ayasrc="cd ~/src/aya"
+
+alias duplodev="curl --location 'https://ayacare.duplocloud.net//adminproxy/GetJITAwsConsoleAccessUrl' --header 'Authorization: Bearer AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAATsTPHaOLjE2HPVtbLEc_wQAAAAACAAAAAAAQZgAAAAEAACAAAAAgd7JXC3dFRD0RW2QkLh2W18beQvuaU448lGzYXhBK0QAAAAAOgAAAAAIAACAAAAA02tn_7XPGq7URuOT5_A6iI1lG-kowBkcbumkT6buj65AAAAAOB9xVOHV8GN4PxrftHoee_XSp7YzuRWWYngA8UzC6d-gOB7QipiBmbj6sqmtSzs0DTuYvzv62FmfpMbl_xbFHz1zVMgG6Vog6XpNoq-1C64TaajZq08rdVlNFPHVme-Vj7luTYmaWIJPT4oY7gDCZZnHKYZZSiOn8GpTzcmXHcoiOfda3t45f9N05CRzLlbtAAAAAbz04f5UGiJoQS-juci99HzNeOtt4pUizcGDIlZr-myRWkigcm439gSaYJ8H1OXbtIDM3u_1MhZ0jyl25w66v7g' | jq '.ConsoleUrl' | xargs open"
+
+alias duploprod="curl --location 'https://ayacare-prod.duplocloud.net//adminproxy/GetJITAwsConsoleAccessUrl' --header 'Authorization: Bearer AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAlE0nSbosgEyF7g7e6G4y9wAAAAACAAAAAAAQZgAAAAEAACAAAACevenK-uYTiGkbX9NJN-ydjS8LmProQvYyvt8ErGnJhgAAAAAOgAAAAAIAACAAAAB3MXdcjWTk2BqBhIDTiCMzFXn1ElBmyNZ5em-U5D0JPJAAAAAINY6YMyAZhaocvomXSRllv4nnleGwfY3AUVdaflocwzV8BMJGQ8vhQamjK59piqXkC1omF6_R4_mhzcWhr8TA8wnzUw9OfCBB1cGRc-WMR7ot1sDM1qJUQdACaTVI_ehfhjliWpx8CANSmlHDNCuZFs8qr6S9o2udbfpi1TYXlvNFOEtyNtOeSClW5d317QxAAAAA85uJ1SUQq-Fmxegf8sXkeuiFzPfhQtshanJRlC_OoD9qIdmwVDE8mySlqk4bbfEVGdMe2rm1FKoDRLXbEDed9g' | jq '.ConsoleUrl' | xargs open"
