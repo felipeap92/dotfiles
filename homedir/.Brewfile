@@ -15,6 +15,8 @@ tap "buo/cask-upgrade"
 tap "dracula/install"
 tap "aws/tap"
 tap "hashicorp/tap"
+tap "nikolaeu/numi"
+tap "pulumi/tap"
 
 ################################
 ######### HOMEBREW TAPS ########
@@ -89,13 +91,13 @@ cask "appcleaner"
 cask "zoom"
 cask "anki"
 cask "adobe-acrobat-reader"
-cask "cleanmymac"
 
 cask "docker" # Docker for mac
 cask "insomnia"
 cask "cyberduck"
 cask "dbeaver-community"
 cask "slack"
+cask "devtoys"
 
 
 ################################
@@ -103,4 +105,3 @@ cask "slack"
 ################################
 
 mas "Xcode", id: 497799835
-mas "WireGuard", id: 1451685025
